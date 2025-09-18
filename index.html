@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSVText — personalize & prep SMS from a CSV</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Papa Parse for robust CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="wrap brand">
+      <div class="badge">Σ</div>
+      <div>
+        <div class="title">CSVText</div>
+        <div class="subtitle">Personalize a message from CSV rows and send via SMS</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Step 1: CSV -->
+    <section class="panel">
+      <h2>1) Load your CSV</h2>
+      <p class="muted">Your CSV should include a header row with column names.</p>
+      <div class="row">
+        <input id="csvFile" type="file" accept=".csv,text/csv" />
+        <label class="check">
+          <input id="hasHeader" type="checkbox" checked />
+          <span>First row is header</span>
+        </label>
+        <button id="btnParse" class="btn">Parse CSV</button>
+      </div>
+      <div id="csvInfo" class="muted mt-small"></div>
+    </section>
+
+    <!-- Step 2: Template message -->
+    <section class="panel">
+      <h2>2) Write your message template</h2>
+      <p class="muted">
+        Use double curly braces for variables, e.g., <code>Hello {{first_name}} — your code is {{code}}.</code>
+      </p>
+      <textarea id="messageTemplate" placeholder="Type your message with {{variables}} here..."></textarea>
+      <div class="row">
+        <button id="btnDetectVars" class="btn">Detect Variables</button>
+        <div id="detectedVars" class="chips" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Step 3: Map variables + phone -->
+    <section class="panel" id="mappingPanel" hidden>
+      <h2>3) Map variables to CSV columns</h2>
+      <div id="mappingGrid" class="grid"></div>
+      <div class="mt">
+        <label for="phoneColumn">Phone number column</label>
+        <select id="phoneColumn"></select>
+        <p class="hint">We'll use this column for the SMS recipient for each row.</p>
+      </div>
+    </section>
+
+    <!-- Step 4: Send -->
+    <section class="panel" id="sendPanel" hidden>
+      <h2>4) Review & send</h2>
+      <div class="row wrap-gap">
+        <button id="btnStart" class="btn primary">Start Session</button>
+        <button id="btnPrev" class="btn" disabled>Prev</button>
+        <button id="btnNext" class="btn" disabled>Next</button>
+        <button id="btnOpenSMS" class="btn success" disabled>Open SMS</button>
+        <button id="btnCopy" class="btn">Copy Message</button>
+      </div>
+
+      <div class="progress mt-small">
+        <div id="progressBar" class="bar"></div>
+      </div>
+      <div id="progressText" class="muted mt-small">0 / 0</div>
+
+      <div class="preview mt">
+        <div class="preview-row">
+          <div>
+            <div class="label">Row number</div>
+            <div id="rowNum" class="value">—</div>
+          </div>
+          <div>
+            <div class="label">Recipient</div>
+            <div id="rowPhone" class="value">—</div>
+          </div>
+        </div>
+
+        <div class="preview-message">
+          <div class="label">Personalized message</div>
+          <textarea id="renderedMessage" readonly></textarea>
+        </div>
+
+        <details class="mt-small">
+          <summary>See this row's data</summary>
+          <pre id="rowJson" class="json"></pre>
+        </details>
+      </div>
+
+      <p class="muted mt-small">
+        Tip: On iOS, Android, and many desktop SMS apps, the button will open your SMS composer with the message prefilled.
+        If your platform doesn't support this, use “Copy Message” instead.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>CSVText</span>
+      <span class="muted">No data leaves your browser.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
